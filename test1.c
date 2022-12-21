@@ -54,14 +54,11 @@ switch(choice){
             scanJournal(name1,name2,&amount1,&amount2);
             if(amount1!=amount2)
             {printf("BOTH VALUE SHOULD BE SAME\n");break;}
-            journalEntry[journal_counter]=(JournalEntry){.date=journal_counter,.d_value=amount1.c_value=amount2,.particular1=name1,.particular2=name2};
+            journalEntry[journal_counter]=(JournalEntry){.date=journal_counter,.d_value=amount1,.c_value=amount2,.particular1=name1,.particular2=name2};
             journal_counter++;
             break;
     case 2:
             
-            journalEntry[0]=(JournalEntry){.date=0,.c_value=100,.d_value=100,.particular1="cash",.particular2="capital"};
-            journalEntry[1]=(JournalEntry){.date=0,.c_value=200,.d_value=200,.particular1="cash",.particular2="capital"};
-
             ledgers = (Ledger*) malloc(sizeof(Ledger)*5);
 
             ledgers[0].debit_records= (Ledger_Record*)malloc(sizeof(Ledger_Record)*5);
