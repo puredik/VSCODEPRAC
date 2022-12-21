@@ -2,57 +2,60 @@
 #include <windows.h>
 
 int printJournal();
-
-struct Balance{
+int scanJournal();
+struct JournalEntry{
+    int date;
+    char* particular1;
+    char* particular2;
     int d_value;
     int c_value;
 };
-
-struct JournalEntry{
-    int date;
-    const char* particular1;
-    const char* particular2;
-    int d_value;
-    int c_valuel;
-};
+char name_buffer1[10];
+char name_buffer2[10];
 
 int main(){
-char* name1;
-char* name2;
+
+char name1[10];
+char name2[10];
 int amount1=0;
 int amount2=1;
-struct Balance balance={0,0};
-struct JournalEntry journalEntry[10];
+
+struct JournalEntry journalEntry[10]={};
 int i=0;
 
-    for (int i = 0; i < 10; i++)
-    {
-        journalEntry[i].date=0;
-    }
-    
-while(1){
-amount1=0;
-amount2=1;
-printf("\nEnter Journal:\n");
-printf("(Dr__)____|(Cr__)____\n");
-while(amount1!=amount2)
-{
-    scanf("%c%d%c%d",name1,&amount1,name2,&amount2);
+for(i=0;i<5;i++){
+    printf("\nEnter Journal:\n");   
+    printf("(Dr__)____|(Cr__)____\n");
+    scanJournal(name1,name2,&amount1,&amount2);
     if(amount1!=amount2){
         printf("BOTH VALUE SHOULD BE SAME\n");
+        continue;
     }
-    journalEntry[0].particular1=name1;
-    journalEntry[0].particular2=name2;
-    journalEntry[0].d_value=amount1;
-    journalEntry[0].c_valuel=amount2;
+    journalEntry[i]=(struct JournalEntry){.date=0,.particular1=name1,.particular2=name2,
+                         .d_value=amount1,.c_value=amount2};   
+    
+    printJournal(journalEntry[i]);
     
 }
+
+printf("EVERY JOURNAL ENTRY");
+for(i=0;i<5;i++){
+printJournal(journalEntry[i]);
+
 }
 }
 
+
 int printJournal(struct JournalEntry journal){
-printf("\nJournal:\n");
+printf("\n-------------------------------------------------\n");
 printf("(Dr)%s :$%d \n\t\t(Cr)%s :$%d",journal.particular1,journal.d_value, 
-                                journal.particular2,journal.c_valuel);
-return 0;
+                                journal.particular2,journal.c_value);
+printf("\n");
+return 1;
+}
+int scanJournal(char* name1, char* name2, int* ptr1, int* ptr2){
+    scanf("%s %d",name_buffer1,ptr1);
+    memcpy(name1,name_buffer1,9);name1[9]='\0';
+    scanf("%s %d",name_buffer2,ptr2);
+    memcpy(name2,name_buffer2,9);name2[9]='\0';
 }
