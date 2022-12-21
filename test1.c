@@ -131,5 +131,4 @@ int scanJournal(char* name1, char* name2, int* ptr1, int* ptr2){
     scanf("%s %d",name_buffer2,ptr2);
     memcpy(name2,name_buffer2,9);name2[9]='\0';
 }
-//version1
-//do something more on version1
+//version2
