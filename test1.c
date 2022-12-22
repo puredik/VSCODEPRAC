@@ -42,6 +42,8 @@ int journal_counter=0;
 int i=0;
 int journal_len=5;
 int end_program=0;
+ledgers = (Ledger*) malloc(sizeof(Ledger)*5);
+
 while(end_program!=1){
 
 
@@ -59,8 +61,6 @@ switch(choice){
             break;
     case 2:
             
-            ledgers = (Ledger*) malloc(sizeof(Ledger)*5);
-
             ledgers[0].debit_records= (Ledger_Record*)malloc(sizeof(Ledger_Record)*5);
             ledgers[0].accountName=journalEntry[0].particular1;
             ledger_record.debit_or_credit=0;
