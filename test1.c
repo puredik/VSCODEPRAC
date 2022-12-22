@@ -228,4 +228,4 @@ int scanJournal(char* name1, char* name2, int* ptr1, int* ptr2){// name_buffer<-
     scanf("%s %d",name_buffer2,ptr2);
     memcpy(name2,name_buffer2,9);name2[9]='\0';
 }
-//version2
+//version3
