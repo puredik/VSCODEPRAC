@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <windows.h>
 
 typedef struct Ledger_Record{
     int date;
@@ -7,6 +6,7 @@ typedef struct Ledger_Record{
     char name[10];
     int amount;
 }Ledger_Record;
+
 typedef struct Ledger{
     int debit_record_size;
     int credit_record_size;
@@ -14,8 +14,10 @@ typedef struct Ledger{
     Ledger_Record* debit_records;
     Ledger_Record* credit_records;   
 }Ledger;
+
 int printJournal();
 int scanJournal();
+
 typedef struct JournalEntry{
     int date;
     char particular1[10];
@@ -43,7 +45,6 @@ JournalEntry journalEntry[10]={};
 int journal_counter=0;
 int i=0;
 int j=0;
-int k=0;
 int journal_len=5;
 int end_program=0;
 int ledgers_size=0;
@@ -60,7 +61,6 @@ for(i=0;i<10;i++){
     for(j=0;j<10;j++){
     ledgers[i].debit_records[j]=(Ledger_Record){.amount=0,.name="EMPTY"};
     ledgers[i].credit_records[j]=(Ledger_Record){.amount=0,.name="EMPTY"};
-    //ledgers[i].credit_records[j].amount=0;
     }
   
 }
@@ -80,82 +80,47 @@ switch(choice){
             journalEntry[journal_counter]=(JournalEntry){.date=journal_counter,.d_value=amount1,.c_value=amount2};
             memcpy(journalEntry[journal_counter].particular1,name1,10);
             memcpy(journalEntry[journal_counter].particular2,name2,10);
-
-            //printf("CREATED JOURNAL %d :%s %d %s %d",journal_counter,name1,amount1,name2,amount2);
             journal_counter++;
             break;
 
-    case 2: 
-            //for every journal entry check the name of ledger
-            //if there is no such ledger make new ledger
-            //if there is such ledger add ledger record on the ledger.
-            for(i=0;i<journal_counter;i++){// for every journal entry
-                //printf("\n\n\nINVESTIGATING %d th JOURNAL\n",i);
-               // printf("JOURNAL %d :%s %d %s %d",journalEntry[i].date,journalEntry[i].particular1,journalEntry[i].d_value,journalEntry[i].particular2,journalEntry[i].c_value);
-
-                   j=0; 
+    case 2: for(i=0;i<journal_counter;i++){
+                j=0; 
                 do{
-                    //  printf("COMPARING %s and %s",journalEntry[i].particular1,ledgers[j].accountName);
                      if(strcmp(journalEntry[i].particular1,ledgers[j].accountName)==0){
-                        is_particular1_account=1;//printf("\nFOUND PARTICULAR 1 ACCOUNT %s %s\n",journalEntry[i].particular1,ledgers[j].accountName);
-                     }//else{printf("\nDIDNT FIND PARTICULAR 1 ACCOUNT");}
-                     
-                    // printf("COMPARING %s and %s",journalEntry[i].particular2,ledgers[j].accountName);
+                        is_particular1_account=1;
+                     }
                      if(strcmp(journalEntry[i].particular2,ledgers[j].accountName)==0){
                         
-                        is_particular2_account=1;//printf("\nFOUND PARTICULAR 2 ACCOUNT%s %s\n",journalEntry[i].particular1,ledgers[j].accountName);
-                     }//else{printf("\nDIDNT FIND PARTICULAR 2 ACCOUNT");}
+                        is_particular2_account=1;
+                     }
                      j++;
                 }while(j<ledgers_size);
                 if(!is_particular1_account){
-                    
                     memcpy(ledgers[ledgers_size].accountName,journalEntry[i].particular1,10);
-                    //printf("\nMADE ACCOOUNT %s",ledgers[ledgers_size].accountName);
                     ledgers_size++;
-                    //printf("LedgerSIZE %d",ledgers_size);
-                
                 }
                 if(!is_particular2_account){
                     memcpy(ledgers[ledgers_size].accountName,journalEntry[i].particular2,10);
-                    //printf("\nMADE ACCOOUNT %s",ledgers[ledgers_size].accountName);
                     ledgers_size++;
-                    //printf("LedgerSIZE %d",ledgers_size);
-
-                }
+                    }
                 j=0;
-                do{//check every ledger                    
+                do{
                     if(strcmp(ledgers[j].accountName,journalEntry[i].particular1)==0)
-                    {
-                            //there is account for debit only -> write in exsisting ledger
-                        
+                    {   
                         ledgers[j].debit_records[ledgers[j].debit_record_size].amount=journalEntry[i].d_value;
                         memcpy(ledgers[j].debit_records[ledgers[j].debit_record_size].name,journalEntry[i].particular2,10);
                         ledgers[j].debit_record_size++;
-                         //if dont exsit same account->make new ledger for credit
-                        // ledgers[ledgers_size].accountName=journalEntry[i].particular2;
-                        // ledgers_size++;
-
-
                     }
                     if(strcmp(ledgers[j].accountName,journalEntry[i].particular2)==0)
-                    //there is account for credit only
                     { 
-                       
                         ledgers[j].credit_records[ledgers[j].credit_record_size].amount=journalEntry[i].c_value;
                         memcpy(ledgers[j].credit_records[ledgers[j].credit_record_size].name,journalEntry[i].particular1,10);
                         ledgers[j].credit_record_size++;
-
-                        // ledgers[ledgers_size].accountName=journalEntry[i].particular1;
-                        // ledgers_size++;
                     }
-                    
                 j++;
                 }while(j<ledgers_size);
             }
-         
-            //printf("\nLEDGERS SIZE %d",ledgers_size);
             for(i=0;i<ledgers_size;i++){
-                //printf("TEST i %d",i);
             printf("\n\n-----------------------------------------------------------");
             printf("\n|DR\t\t\t%s A/C\t\t\tCR|",ledgers[i].accountName);
             printf("\n-----------------------------------------------------------\n");
@@ -187,19 +152,6 @@ switch(choice){
             printf("\nProgram End"); 
             break;
 }
-// for(i=0;i<journal_len;i++){
-//     printf("\nEnter Journal:\n");   
-//     printf("(Dr__)____|(Cr__)____\n");
-//     scanJournal(name1,name2,&amount1,&amount2);
-//     if(amount1!=amount2){
-//         printf("BOTH VALUE SHOULD BE SAME\n");
-//         continue;
-//     }
-//     journalEntry[i]=(JournalEntry){.date=0,.particular1=name1,.particular2=name2,
-//                          .d_value=amount1,.c_value=amount2};   
-//     printJournal(journalEntry[i]);     
-// }
-// printTotalJournal(journalEntry,journal_len);
 }
 }
 
