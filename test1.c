@@ -183,9 +183,6 @@ switch(choice){
 
 
     default:
-            for(i=0;i<journal_counter;i++){
-                printf("JOURNAL:%s %d %s",journalEntry[i].particular1,journalEntry[i].c_value,journalEntry[i].particular2);
-            }
             end_program=1;
             printf("\nProgram End"); 
             break;
