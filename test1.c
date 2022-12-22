@@ -49,9 +49,8 @@ printJournal(journalEntry[i]);
 int printJournal(struct JournalEntry journal){
 printf("\n-------------------------------------------------\n");
 printf("(Dr)%s :$%d \n\t\t(Cr)%s :$%d",journal.particular1,journal.d_value, 
-                                journal.particular2,journal.c_value);
-printf("\n");
-return 1;
+                                journal.particular2,journal.c_valuel);
+return 0;
 }
 int scanJournal(char* name1, char* name2, int* ptr1, int* ptr2){
     scanf("%s %d",name_buffer1,ptr1);
