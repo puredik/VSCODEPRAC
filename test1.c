@@ -1,22 +1,20 @@
 #include <stdio.h>
-
+#include <windows.h>
 typedef struct Ledger_Record{
     int date;
-    int debit_or_credit;//0debit 1 credit;
     char name[10];
     int amount;
 }Ledger_Record;
 
 typedef struct Ledger{
+    int balance;
+    int account_info;//0 for asset , 1 for liabilitiy , 2 for capital, 3 for profit, 4 for loss .. if not set -1;
     int debit_record_size;
     int credit_record_size;
     char accountName[10];
     Ledger_Record* debit_records;
     Ledger_Record* credit_records;   
 }Ledger;
-
-int printJournal();
-int scanJournal();
 
 typedef struct JournalEntry{
     int date;
@@ -25,14 +23,17 @@ typedef struct JournalEntry{
     int d_value;
     int c_value;
 }JournalEntry;
+
+int printJournal();
+int scanJournal();
 int printTotalJournal(JournalEntry *journal, int n);
+
 char name_buffer1[10];
 char name_buffer2[10];
 
 int main(){
 
 Ledger* ledgers;
-Ledger ledger;
 Ledger_Record ledger_record;
 char name1[10];
 char name2[10];
@@ -41,7 +42,7 @@ int amount2=1;
 int choice;
 int is_particular1_account=0;
 int is_particular2_account=0;
-JournalEntry journalEntry[10]={};
+JournalEntry* journalEntry=(JournalEntry*)malloc(sizeof(JournalEntry)*10);
 int journal_counter=0;
 int i=0;
 int j=0;
@@ -52,7 +53,7 @@ ledgers = (Ledger*) malloc(sizeof(Ledger)*10);
 
 for(i=0;i<10;i++){
     
-    ledgers[i]=(Ledger){.accountName="NOTHING"};
+    ledgers[i]=(Ledger){.accountName="NOTHING",.account_info=-1};
     ledgers[i].credit_record_size=0;
     ledgers[i].debit_record_size=0;
     ledgers[i].debit_records=(Ledger_Record*)malloc(sizeof(Ledger_Record)*10);
@@ -68,7 +69,7 @@ for(i=0;i<10;i++){
 while(end_program!=1){
 
 
-printf("\n1.Journal\t2.Ledger\t\n");
+printf("\n1.Journal\t2.Ledger\t3.TrialBalance\n");
 printf("Enter Your Action:");
 scanf("%d",&choice);
 switch(choice){
@@ -146,6 +147,7 @@ switch(choice){
             }
             break;
 
+    case 3://trial balance// for each ledger define type.
 
     default:
             end_program=1;
