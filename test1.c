@@ -51,7 +51,6 @@ int journal_len=5;
 int end_program=0;
 int ledgers_size=0;
 
-
 while(end_program!=1){
 
 
@@ -132,19 +131,19 @@ switch(choice){
             if(ledgers[i].debit_record_size>ledgers[i].credit_record_size){
                 for(j=0;j<ledgers[i].credit_record_size;j++){
                 printf("To %s\t%d\t\t\t",string_trim_10(ledgers[i].debit_records[j].name),ledgers[i].debit_records[j].amount);
-                printf("BY %s\t%d\t\t\n",string_trim_10(ledgers[i].credit_records[j].name),ledgers[i].credit_records[j].amount);
+                printf("BY %s  %d\t\n",string_trim_10(ledgers[i].credit_records[j].name),ledgers[i].credit_records[j].amount);
                 }
                 for(j=ledgers[i].credit_record_size;j<ledgers[i].debit_record_size;j++){
-                printf("To %s\t%d\n",string_trim_10(ledgers[i].debit_records[j].name),ledgers[i].debit_records[j].amount);
+                printf("To %s  %d\n",string_trim_10(ledgers[i].debit_records[j].name),ledgers[i].debit_records[j].amount);
                 }
             }
             else if(ledgers[i].debit_record_size<=ledgers[i].credit_record_size){
                 for(j=0;j<ledgers[i].debit_record_size;j++){
-                printf("To %s\t%d\t\t\t\t",string_trim_10(ledgers[i].debit_records[j].name),ledgers[i].debit_records[j].amount);
-                printf("BY %s\t%d\t\t\n",string_trim_10(ledgers[i].credit_records[j].name),ledgers[i].credit_records[j].amount);
+                printf("To %s  %d\t\t\t",string_trim_10(ledgers[i].debit_records[j].name),ledgers[i].debit_records[j].amount);
+                printf("BY %s  %d\t\n",string_trim_10(ledgers[i].credit_records[j].name),ledgers[i].credit_records[j].amount);
                 }
                 for(j=ledgers[i].debit_record_size;j<ledgers[i].credit_record_size;j++){
-                printf("\t\t\t\t\t\tBy %s\t%d",string_trim_10(ledgers[i].credit_records[j].name),ledgers[i].credit_records[j].amount);
+                printf("\t\t\t\t\tBy %s\t%d",string_trim_10(ledgers[i].credit_records[j].name),ledgers[i].credit_records[j].amount);
                 }
             }
             
