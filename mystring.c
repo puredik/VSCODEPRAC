@@ -61,6 +61,7 @@ for(i=string_length(string);i<9;i++){
 string2[i] = ' ';
 }
 
+string2[9]='$';
 string2[10]='\0';
 
 return string2;

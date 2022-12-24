@@ -7,7 +7,7 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "${file}","${fileDirname}\\mystring.c",
+                "${file}","${fileDirname}\\mystring.c","${fileDirname}\\myqueue.c",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],
