@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <windows.h>
+#include "mystring.h"
 typedef struct Ledger_Record{
     int date;
     char name[10];
@@ -49,22 +50,7 @@ int j=0;
 int journal_len=5;
 int end_program=0;
 int ledgers_size=0;
-ledgers = (Ledger*) malloc(sizeof(Ledger)*10);
 
-for(i=0;i<10;i++){
-    
-    ledgers[i]=(Ledger){.accountName="NOTHING",.account_info=-1};
-    ledgers[i].credit_record_size=0;
-    ledgers[i].debit_record_size=0;
-    ledgers[i].debit_records=(Ledger_Record*)malloc(sizeof(Ledger_Record)*10);
-    ledgers[i].credit_records=(Ledger_Record*)malloc(sizeof(Ledger_Record)*10);
-    
-    for(j=0;j<10;j++){
-    ledgers[i].debit_records[j]=(Ledger_Record){.amount=0,.name="EMPTY"};
-    ledgers[i].credit_records[j]=(Ledger_Record){.amount=0,.name="EMPTY"};
-    }
-  
-}
 
 while(end_program!=1){
 
@@ -84,7 +70,25 @@ switch(choice){
             journal_counter++;
             break;
 
-    case 2: for(i=0;i<journal_counter;i++){
+    case 2: 
+                
+                ledgers = (Ledger*) malloc(sizeof(Ledger)*10);
+                ledgers_size=0;
+                for(i=0;i<10;i++){
+                    
+                    ledgers[i]=(Ledger){.accountName="NOTHING",.account_info=-1};
+                    ledgers[i].credit_record_size=0;
+                    ledgers[i].debit_record_size=0;    
+                    ledgers[i].debit_records=(Ledger_Record*)malloc(sizeof(Ledger_Record)*10);
+                    ledgers[i].credit_records=(Ledger_Record*)malloc(sizeof(Ledger_Record)*10);
+                    
+                    for(j=0;j<10;j++){
+                    ledgers[i].debit_records[j]=(Ledger_Record){.amount=0,.name="EMPTY"};
+                    ledgers[i].credit_records[j]=(Ledger_Record){.amount=0,.name="EMPTY"};
+                    }
+                
+                }
+                for(i=0;i<journal_counter;i++){
                 j=0; 
                 do{
                      if(strcmp(journalEntry[i].particular1,ledgers[j].accountName)==0){
@@ -127,24 +131,24 @@ switch(choice){
             printf("\n-----------------------------------------------------------\n");
             if(ledgers[i].debit_record_size>ledgers[i].credit_record_size){
                 for(j=0;j<ledgers[i].credit_record_size;j++){
-                printf("To %s\t%d\t\t\t",ledgers[i].debit_records[j].name,ledgers[i].debit_records[j].amount);
-                printf("BY %s\t%d\t\t\n",ledgers[i].credit_records[j].name,ledgers[i].credit_records[j].amount);
+                printf("To %s\t%d\t\t\t",string_trim_10(ledgers[i].debit_records[j].name),ledgers[i].debit_records[j].amount);
+                printf("BY %s\t%d\t\t\n",string_trim_10(ledgers[i].credit_records[j].name),ledgers[i].credit_records[j].amount);
                 }
                 for(j=ledgers[i].credit_record_size;j<ledgers[i].debit_record_size;j++){
-                printf("To %s\t%d\n",ledgers[i].debit_records[j].name,ledgers[i].debit_records[j].amount);
+                printf("To %s\t%d\n",string_trim_10(ledgers[i].debit_records[j].name),ledgers[i].debit_records[j].amount);
                 }
             }
             else if(ledgers[i].debit_record_size<=ledgers[i].credit_record_size){
                 for(j=0;j<ledgers[i].debit_record_size;j++){
-                printf("To %s\t%d\t\t\t\t",ledgers[i].debit_records[j].name,ledgers[i].debit_records[j].amount);
-                printf("BY %s\t%d\t\t\n",ledgers[i].credit_records[j].name,ledgers[i].credit_records[j].amount);
+                printf("To %s\t%d\t\t\t\t",string_trim_10(ledgers[i].debit_records[j].name),ledgers[i].debit_records[j].amount);
+                printf("BY %s\t%d\t\t\n",string_trim_10(ledgers[i].credit_records[j].name),ledgers[i].credit_records[j].amount);
                 }
                 for(j=ledgers[i].debit_record_size;j<ledgers[i].credit_record_size;j++){
-                printf("\t\t\t\t\t\tBy %s\t%d",ledgers[i].credit_records[j].name,ledgers[i].credit_records[j].amount);
+                printf("\t\t\t\t\t\tBy %s\t%d",string_trim_10(ledgers[i].credit_records[j].name),ledgers[i].credit_records[j].amount);
                 }
             }
             
-            }
+            }free(ledgers);
             break;
 
     case 3://trial balance// for each ledger define type.
