@@ -2,7 +2,9 @@
 #include <string.h>
 #include <stdio.h>
 #include "mystring.h"
-
+#ifndef ENOUGH20
+#define ENOUGH20 10
+#endif
 int string_length(char* string){
 int i=0;
 while(string[i]!='\0'){
@@ -26,9 +28,10 @@ Char4s parse_num_string(char* string){
     int i=0;
     int j=0;
     Char4s char4s;
-char(*ptr)[4]=(char(*)[4])malloc(sizeof(char)*10*4);
+  
+char(*ptr)[4]=(char(*)[4])malloc(sizeof(char)*ENOUGH20*4);
 char4s.ptr=ptr;
-char string_buffer[10];
+char string_buffer[ENOUGH20];
 int digit_counter=0;
 int char_counter=0;
 int number_counter=0;
@@ -55,14 +58,14 @@ return char4s;
 };
 char* string_trim_10(char* string){
     int i=0;
-char* string2=(char*)malloc(sizeof(char)*10);
+char* string2=(char*)malloc(sizeof(char)*ENOUGH20);
 memcpy(string2,string,string_length(string));
-for(i=string_length(string);i<9;i++){
+for(i=string_length(string);i<ENOUGH20;i++){
 string2[i] = ' ';
 }
 
-string2[9]='$';
-string2[10]='\0';
+string2[ENOUGH20-1]='$';
+string2[ENOUGH20]='\0';
 
 return string2;
 };

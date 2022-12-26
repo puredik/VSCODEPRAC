@@ -8,9 +8,12 @@
 #define PROFIT 3
 #define LOSS 4
 #define NOT_SET -1
+#define ENOUGH20 10
+
+
 typedef struct Ledger_Record{
     int date;
-    char name[10];
+    char name[ENOUGH20];
     int amount;
 }Ledger_Record;
 
@@ -20,15 +23,15 @@ typedef struct Ledger{
     int account_info;//0 for asset , 1 for liabilitiy , 2 for capital, 3 for profit, 4 for loss .. if not set -1;
     int debit_record_size;
     int credit_record_size;
-    char accountName[10];
+    char accountName[ENOUGH20];
     Ledger_Record* debit_records;
     Ledger_Record* credit_records;   
 }Ledger;
 
 typedef struct JournalEntry{
     int date;
-    char particular1[10];
-    char particular2[10];
+    char particular1[ENOUGH20];
+    char particular2[ENOUGH20];
     int d_value;
     int c_value;
 }JournalEntry;
@@ -37,27 +40,32 @@ int printJournal();
 int scanJournal();
 int printTotalJournal(JournalEntry *journal, int n);
 void set_5num_zero(int* a, int* b, int* c, int* d, int* e);
-char name_buffer1[10];
-char name_buffer2[10];
+char name_buffer1[ENOUGH20];
+char name_buffer2[ENOUGH20];
 
 int main(){
-NAME_VAL debit_balance_queue[50];
-NAME_VAL credit_balance_queue[50];
+NAME_VAL_QUEUE debit_balance_queue;
+NAME_VAL_QUEUE credit_balance_queue;
+NAME_VAL pair;
+NAME_VAL pair2;
 Char4s char4s;
 Ledger* ledgers;
 Ledger balance;
 Ledger_Record ledger_record;
-char name1[10];
-char name2[10];
+char name1[ENOUGH20];
+char name2[ENOUGH20];
 int amount1=0;
 int amount2=1;
 int choice;
 int is_particular1_account=0;
 int is_particular2_account=0;
-JournalEntry* journalEntry=(JournalEntry*)malloc(sizeof(JournalEntry)*10);
+debit_balance_queue=make_queue(50);
+credit_balance_queue=make_queue(50);
+JournalEntry* journalEntry=(JournalEntry*)malloc(sizeof(JournalEntry)*100);
 int journal_counter=0;
 int i=0;
 int j=0;
+int k=0;
 int journal_len=5;
 int end_program=0;
 int ledgers_size=0;
@@ -67,7 +75,8 @@ int count_liability_accounts=0;
 int count_capital_accounts=0;
 int count_profit_accounts=0;
 int count_loss_accounts=0;
-
+int debit_balance=0;
+int credit_balance=0;
 while(end_program!=1){
 
 
@@ -81,16 +90,16 @@ switch(choice){
             if(amount1!=amount2)
             {printf("BOTH VALUE SHOULD BE SAME\n");break;}
             journalEntry[journal_counter]=(JournalEntry){.date=journal_counter,.d_value=amount1,.c_value=amount2};
-            memcpy(journalEntry[journal_counter].particular1,name1,10);
-            memcpy(journalEntry[journal_counter].particular2,name2,10);
+            memcpy(journalEntry[journal_counter].particular1,name1,ENOUGH20);
+            memcpy(journalEntry[journal_counter].particular2,name2,ENOUGH20);
             journal_counter++;
             break;
 
     case 2: 
                 
-                ledgers = (Ledger*) malloc(sizeof(Ledger)*10);
+                ledgers = (Ledger*) malloc(sizeof(Ledger)*ENOUGH20);
                 ledgers_size=0;
-                for(i=0;i<10;i++){
+                for(i=0;i<ENOUGH20;i++){
                     
                     ledgers[i]=(Ledger){.accountName="NOTHING",.account_info=-1};
                     ledgers[i].credit_record_size=0;
@@ -98,10 +107,10 @@ switch(choice){
                     ledgers[i].account_info=NOT_SET;    
                     ledgers[i].id=0;
                     ledgers[i].balance=0;
-                    ledgers[i].debit_records=(Ledger_Record*)malloc(sizeof(Ledger_Record)*10);
-                    ledgers[i].credit_records=(Ledger_Record*)malloc(sizeof(Ledger_Record)*10);
+                    ledgers[i].debit_records=(Ledger_Record*)malloc(sizeof(Ledger_Record)*ENOUGH20);
+                    ledgers[i].credit_records=(Ledger_Record*)malloc(sizeof(Ledger_Record)*ENOUGH20);
                     
-                    for(j=0;j<10;j++){
+                    for(j=0;j<ENOUGH20;j++){
                     ledgers[i].debit_records[j]=(Ledger_Record){.amount=0,.name="EMPTY"};
                     ledgers[i].credit_records[j]=(Ledger_Record){.amount=0,.name="EMPTY"};
                     }
@@ -128,12 +137,12 @@ switch(choice){
                 //printf("Found status: ACC1 %d ACC2 %d\n",is_particular1_account,is_particular2_account);
                 if(!is_particular1_account){
                    // printf("making %s account\n",journalEntry[i].particular1);
-                    memcpy(ledgers[ledgers_size].accountName,journalEntry[i].particular1,10);
+                    memcpy(ledgers[ledgers_size].accountName,journalEntry[i].particular1,ENOUGH20);
                     ledgers_size++;
                 }
                 if(!is_particular2_account){
                     //printf("making %s account\n",journalEntry[i].particular2);
-                    memcpy(ledgers[ledgers_size].accountName,journalEntry[i].particular2,10);
+                    memcpy(ledgers[ledgers_size].accountName,journalEntry[i].particular2,ENOUGH20);
                     ledgers_size++;
                     }
                 j=0;
@@ -141,14 +150,14 @@ switch(choice){
                     if(strcmp(ledgers[j].accountName,journalEntry[i].particular1)==0)
                     {   
                         ledgers[j].debit_records[ledgers[j].debit_record_size].amount=journalEntry[i].d_value;
-                        memcpy(ledgers[j].debit_records[ledgers[j].debit_record_size].name,journalEntry[i].particular2,10);
+                        memcpy(ledgers[j].debit_records[ledgers[j].debit_record_size].name,journalEntry[i].particular2,ENOUGH20);
                         ledgers[j].debit_record_size++;
                         
                     }
                     if(strcmp(ledgers[j].accountName,journalEntry[i].particular2)==0)
                     { 
                         ledgers[j].credit_records[ledgers[j].credit_record_size].amount=journalEntry[i].c_value;
-                        memcpy(ledgers[j].credit_records[ledgers[j].credit_record_size].name,journalEntry[i].particular1,10);
+                        memcpy(ledgers[j].credit_records[ledgers[j].credit_record_size].name,journalEntry[i].particular1,ENOUGH20);
                         ledgers[j].credit_record_size++;
                        
                     }
@@ -182,9 +191,9 @@ switch(choice){
             break;
 
     case 3://trial balance// for each ledger define type.
-                ledgers = (Ledger*) malloc(sizeof(Ledger)*10);
+                ledgers = (Ledger*) malloc(sizeof(Ledger)*ENOUGH20);
                 ledgers_size=0;
-                for(i=0;i<10;i++){
+                for(i=0;i<ENOUGH20;i++){
                     
                     ledgers[i]=(Ledger){.accountName="NOTHING",.account_info=-1};
                     ledgers[i].credit_record_size=0;
@@ -192,10 +201,10 @@ switch(choice){
                     ledgers[i].account_info=NOT_SET;    
                     ledgers[i].id=0;
                     ledgers[i].balance=0;
-                    ledgers[i].debit_records=(Ledger_Record*)malloc(sizeof(Ledger_Record)*10);
-                    ledgers[i].credit_records=(Ledger_Record*)malloc(sizeof(Ledger_Record)*10);
+                    ledgers[i].debit_records=(Ledger_Record*)malloc(sizeof(Ledger_Record)*ENOUGH20);
+                    ledgers[i].credit_records=(Ledger_Record*)malloc(sizeof(Ledger_Record)*ENOUGH20);
                     
-                    for(j=0;j<10;j++){
+                    for(j=0;j<ENOUGH20;j++){
                     ledgers[i].debit_records[j]=(Ledger_Record){.amount=0,.name="EMPTY"};
                     ledgers[i].credit_records[j]=(Ledger_Record){.amount=0,.name="EMPTY"};
                     }
@@ -217,11 +226,11 @@ switch(choice){
                      j++;
                 }while(j<ledgers_size);
                 if(!is_particular1_account){
-                    memcpy(ledgers[ledgers_size].accountName,journalEntry[i].particular1,10);
+                    memcpy(ledgers[ledgers_size].accountName,journalEntry[i].particular1,ENOUGH20);
                     ledgers_size++;
                 }
                 if(!is_particular2_account){
-                    memcpy(ledgers[ledgers_size].accountName,journalEntry[i].particular2,10);
+                    memcpy(ledgers[ledgers_size].accountName,journalEntry[i].particular2,ENOUGH20);
                     ledgers_size++;
                     }
                 j=0;
@@ -229,13 +238,13 @@ switch(choice){
                     if(strcmp(ledgers[j].accountName,journalEntry[i].particular1)==0)
                     {   
                         ledgers[j].debit_records[ledgers[j].debit_record_size].amount=journalEntry[i].d_value;
-                        memcpy(ledgers[j].debit_records[ledgers[j].debit_record_size].name,journalEntry[i].particular2,10);
+                        memcpy(ledgers[j].debit_records[ledgers[j].debit_record_size].name,journalEntry[i].particular2,ENOUGH20);
                         ledgers[j].debit_record_size++;
                     }
                     if(strcmp(ledgers[j].accountName,journalEntry[i].particular2)==0)
                     { 
                         ledgers[j].credit_records[ledgers[j].credit_record_size].amount=journalEntry[i].c_value;
-                        memcpy(ledgers[j].credit_records[ledgers[j].credit_record_size].name,journalEntry[i].particular1,10);
+                        memcpy(ledgers[j].credit_records[ledgers[j].credit_record_size].name,journalEntry[i].particular1,ENOUGH20);
                         ledgers[j].credit_record_size++;
                     }
                 j++;
@@ -255,11 +264,14 @@ switch(choice){
 
                 for(i=0;i<ledgers_size;i++){
                     if(ledgers[i].account_info==-1){
-                    printf("%d.%s == %d \n",ledgers[i].id,ledgers[i].accountName,ledgers[i].account_info);
+                    printf("%d.%s\n",ledgers[i].id,ledgers[i].accountName,ledgers[i].account_info);
                 }}
                 printf("WHICH ACCOUNTS ARE ASSET?:");
-                scanf("%c",&balance_check_input[0]);
+                //scanf("%c",&balance_check_input[0]);
+                
+                fputs(balance_check_input,stdin);
                 scanf("%[^\n]s",balance_check_input);
+                
                 
                 char4s = parse_num_string(balance_check_input);
                 for(i=0;i<char4s.count;i++){
@@ -271,9 +283,10 @@ switch(choice){
                         }
                     }
                 }free(char4s.ptr);
+
                 //set asset;
-
-
+                memcpy(balance_check_input,"                    ",ENOUGH20);balance_check_input[ENOUGH20]='\0';
+                
                 for(i=0;i<ledgers_size;i++){
                     if(ledgers[i].account_info== NOT_SET ){
                     printf("\n\n%d.%s\n",ledgers[i].id,ledgers[i].accountName);
@@ -281,8 +294,9 @@ switch(choice){
                 }
                 printf("WHICH ACCOUNTS ARE LIABILITY?:");
                 scanf("%c",&balance_check_input[0]);
+                fputs(balance_check_input,stdin);
                 scanf("%[^\n]s",balance_check_input);
-                
+
                 char4s = parse_num_string(balance_check_input);
                 for(i=0;i<char4s.count;i++){
                     
@@ -292,7 +306,9 @@ switch(choice){
                             ledgers[j].account_info=LIABILITY;count_liability_accounts++;
                         }
                     }
-                }free(char4s.ptr);//check liability
+                }
+                free(char4s.ptr);//check liability
+                memcpy(balance_check_input,"                    ",ENOUGH20);balance_check_input[ENOUGH20]='\0';
 
                 for(i=0;i<ledgers_size;i++){
                     if(ledgers[i].account_info== NOT_SET ){
@@ -300,7 +316,8 @@ switch(choice){
                     }
                 }
                 printf("WHICH ACCOUNTS ARE PROFIT?:");
-                scanf("%c",&balance_check_input[0]);
+                //scanf("%c",&balance_check_input[0]);
+                fputs(balance_check_input,stdin);
                 scanf("%[^\n]s",balance_check_input);
                 
                 char4s = parse_num_string(balance_check_input);
@@ -313,6 +330,7 @@ switch(choice){
                         }
                     }
                 }free(char4s.ptr);//set profit
+                memcpy(balance_check_input,"                    ",ENOUGH20);balance_check_input[ENOUGH20]='\0';
                 
                 
                 for(i=0;i<ledgers_size;i++){
@@ -321,19 +339,26 @@ switch(choice){
                     }
                 }
                 printf("WHICH ACCOUNTS ARE LOSS?:");
-                scanf("%c",&balance_check_input[0]);
+                //scanf("%c",&balance_check_input[0]);
+                fputs(balance_check_input,stdin);
                 scanf("%[^\n]s",balance_check_input);
                 
+
                 char4s = parse_num_string(balance_check_input);
+                
+                printf("\n");
                 for(i=0;i<char4s.count;i++){
                     
                     for(j=0;j<ledgers_size;j++){
+                        //printf("CHECKING ledger%s %d whether its same as %s\n",ledgers[j].accountName,ledgers[j].id,char4s.ptr[i]);
                         if(ledgers[j].id==atoi(char4s.ptr[i]))
                         {
+                            //printf("CHANGED %s account VALUE TO %d",ledgers[j].accountName,LOSS);
                             ledgers[j].account_info=LOSS;count_loss_accounts++;
                         }
                     }
                 }free(char4s.ptr);//set LOSS
+                memcpy(balance_check_input,"                    ",ENOUGH20);balance_check_input[ENOUGH20]='\0';
                 
                 for(i=0;i<ledgers_size;i++){
                     for(j=0;j<ledgers[i].credit_record_size;j++){
@@ -350,22 +375,96 @@ switch(choice){
                         }
                 }
 
+                        enqueue_with_string(&debit_balance_queue,(NAME_VAL){.val=0},"__ASSET__");count_asset_accounts++;
                 for(i=0;i<ledgers_size;i++){
+                    //printf("CHECKED %s info was %d\n",ledgers[i].accountName,ledgers[i].account_info);
                     if(ledgers[i].account_info==ASSET){
-                        enqueue_with_string(debit_balance_queue,(NAME_VAL){.val=ledgers[i].balance},ledgers[i].accountName);
+                        
+                        enqueue_with_string(&debit_balance_queue,(NAME_VAL){.val=ledgers[i].balance},ledgers[i].accountName);
+                        //printf("ENQUEUED %s\n",ledgers[i].accountName);
+                        //printf("NOW i is %d ledger size is %d \n",i,ledgers_size);
+                    }  
+                }
+                        //printf("ENDED ASSET ENQUEUE\n");
+                        enqueue_with_string(&debit_balance_queue,(NAME_VAL){.val=0},"___LOSS___");count_loss_accounts++;
+                        //printf("ENQUEUED LOSS\n");
+
+                for(i=0;i<ledgers_size;i++){
+                    if(ledgers[i].account_info==LOSS){
+                        
+                        enqueue_with_string(&debit_balance_queue,(NAME_VAL){.val=ledgers[i].balance},ledgers[i].accountName);
+                    } 
+
+                }
+
+                        enqueue_with_string(&credit_balance_queue,(NAME_VAL){.val=0},"_LIABIL_");count_liability_accounts++;
+
+                for(i=0;i<ledgers_size;i++){
+                    if(ledgers[i].account_info==LIABILITY){
+                        
+                        enqueue_with_string(&credit_balance_queue,(NAME_VAL){.val=ledgers[i].balance},ledgers[i].accountName);
+                        //printf("ENQUEUEED %s %d\n",ledgers[i].accountName,i);    
+                    }
+                }
+                        enqueue_with_string(&credit_balance_queue,(NAME_VAL){.val=0},"_CAPITAL_");count_capital_accounts++;
+
+                for(i=0;i<ledgers_size;i++){
+                    if(ledgers[i].account_info==CAPITAL){
+                        
+                        enqueue_with_string(&credit_balance_queue,(NAME_VAL){.val=ledgers[i].balance},ledgers[i].accountName);
+                    } 
+                }
+
+                        enqueue_with_string(&credit_balance_queue,(NAME_VAL){.val=0},"__PROFIT__");count_profit_accounts++;
+
+                for(i=0;i<ledgers_size;i++){
+                    if(ledgers[i].account_info==PROFIT){
+                        
+                        enqueue_with_string(&credit_balance_queue,(NAME_VAL){.val=ledgers[i].balance},ledgers[i].accountName);
                     }  
                 }
 
-                printf("\n-----------------------------------------\n");
+                printf("\n---------------------------------------------\n");
                 printf("|                BALANCE SHEET             |");
-                printf("\n-----------------------------------------\n");
-                for(i=0;i<ledgers_size;i++){
-                    printf("ACCOUNT %s BALANCE %d\n",ledgers[i].accountName,ledgers[i].balance);
+                printf("\n---------------------------------------------\n");
+                j=((count_asset_accounts+count_loss_accounts)>(count_liability_accounts+count_capital_accounts+count_profit_accounts))?(count_asset_accounts+count_loss_accounts):(count_liability_accounts+count_capital_accounts+count_profit_accounts);
+                for(i=0;i<j;i++){
+                    pair=dequeue(&debit_balance_queue);
+                    
+                        
+                        if(strcmp(pair.name,"empty")==0){
+                            printf("\t\t\t\t");
+                        }else{
+                            if(pair.val==0){
+                            printf("%s    \t\t\t",pair.name);
+                            }else{
+                            printf("%s  %d\t\t\t",pair.name,pair.val);
+                            debit_balance+=pair.val;
+                            }
+                        }
+                    pair=dequeue(&credit_balance_queue);
+                    
+                        if(strcmp(pair.name,"empty")==0){
+                           
+                        }else{
+                            if(pair.val==0){
+                            printf("%s    \t\t\n",pair.name);
+                            }else{
+                            printf("%s  %d\t\t\n",pair.name,pair.val);
+                            credit_balance+=pair.val;}
+                        }
+
                 }
+                printf("\n==========================================\n");
+                printf("TOTAL\t%d\t\t\t\t%d",debit_balance,credit_balance);
+                
+
+
 
 
 
                 set_5num_zero(&count_asset_accounts,&count_capital_accounts,&count_liability_accounts,&count_loss_accounts,&count_profit_accounts);
+                
                 free(ledgers);
                 break;
 
@@ -398,9 +497,9 @@ printJournal(journal[i]);
 }
 int scanJournal(char* name1, char* name2, int* ptr1, int* ptr2){// name_buffer<-cash, name1<-name_buffer<-cash// name_buffer<-diya
     scanf("%s %d",name_buffer1,ptr1);
-    memcpy(name1,name_buffer1,9);name1[9]='\0';
+    memcpy(name1,name_buffer1,ENOUGH20-1);name1[ENOUGH20-1]='\0';
     scanf("%s %d",name_buffer2,ptr2);
-    memcpy(name2,name_buffer2,9);name2[9]='\0';
+    memcpy(name2,name_buffer2,ENOUGH20-1);name2[ENOUGH20-1]='\0';
 }
 
 void set_5num_zero(int* a, int* b, int* c, int* d, int* e){
