@@ -7,7 +7,11 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
+<<<<<<< Updated upstream
                 "${file}","${fileDirname}\\mystring.c","${fileDirname}\\myqueue.c",
+=======
+                "${file}",
+>>>>>>> Stashed changes
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],
